@@ -17,23 +17,23 @@ class Burger
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups('burgers:read')]
+    #[Groups(['burgers:read', 'burgerDetail:read'])]
     #[ORM\Column(length: 50)]
     private ?string $name = null;
 
-    #[Groups('burgers:read')]
+    #[Groups(['burgers:read', 'burgerDetail:read'])]
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
 
-    #[Groups('burgers:read')]
+    #[Groups(['burgers:read', 'burgerDetail:read'])]
     #[ORM\Column]
     private ?float $price = null;
 
-    #[Groups('burgers:read')]
+    #[Groups(['burgers:read', 'burgerDetail:read'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $img_url = null;
 
-    #[Groups('burgers:read')]
+    #[Groups(['burgers:read', 'burgerDetail:read'])]
     #[ORM\Column]
     private ?bool $is_active = null;
 

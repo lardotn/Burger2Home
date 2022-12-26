@@ -21,4 +21,12 @@ class BurgersController extends AbstractController
 
         return $this->json($composeResponse, 200, [], ['groups' => 'burgers:read']);
     }
+
+    #[Route('/burgers/{id}', name: 'app_burger_id', methods: ['GET'])]
+    public function getBurgerById($id, BurgerRepository $burgerRepository): JsonResponse
+    {
+        $result = ['burgerDetail' => $burgerRepository->findOneBy(['id' => $id])];
+
+        return $this->json($result, 200, [], ['groups' => 'burgerDetail:read']);
+    }
 }
