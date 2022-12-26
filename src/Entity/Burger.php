@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: BurgerRepository::class)]
 class Burger
@@ -16,21 +17,27 @@ class Burger
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups('burgers:read')]
     #[ORM\Column(length: 50)]
     private ?string $name = null;
 
+    #[Groups('burgers:read')]
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
 
+    #[Groups('burgers:read')]
     #[ORM\Column]
     private ?float $price = null;
 
+    #[Groups('burgers:read')]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $img_url = null;
 
+    #[Groups('burgers:read')]
     #[ORM\Column]
     private ?bool $is_active = null;
 
+    #[Groups('burgers:read')]
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'burgers')]
     private Collection $categories;
 

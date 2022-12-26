@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\JoinTable;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 class Category
@@ -16,6 +17,7 @@ class Category
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups('burgers:read')]
     #[ORM\Column(length: 50)]
     private ?string $name = null;
 
