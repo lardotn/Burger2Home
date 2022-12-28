@@ -21,10 +21,12 @@
         "symfony/property-info": "6.2.*",
         "symfony/runtime": "6.2.*",
         "symfony/serializer": "6.2.*",
+        "symfony/validator": "6.2.*",
         "symfony/yaml": "6.2.*"
     },
     "require-dev": {
-        "symfony/maker-bundle": "^1.48"
+        "symfony/maker-bundle": "^1.48",
+        "symfony/var-dumper": "6.2.*"
     },
     "config": {
         "allow-plugins": {
