@@ -6,7 +6,8 @@ use App\Repository\IngredientRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 
 #[ORM\Entity(repositoryClass: IngredientRepository::class)]
 class Ingredient
@@ -16,13 +17,26 @@ class Ingredient
     #[ORM\Column]
     private ?int $id = null;
 
+    #[SerializedName('name')]
     #[ORM\Column(length: 50)]
-    private ?string $name = null;
+    #[Assert\NotBlank()]
+    #[Assert\Length(min: 2,max: 50)]
+    private ?string $name_en = null;
+
+    #[SerializedName('name')]
+    #[ORM\Column(length: 50)]
+    #[Assert\NotBlank()]
+    #[Assert\Length(min: 2,max: 50)]
+    private ?string $name_fr = null;
     
     #[ORM\Column]
+    #[Assert\NotNull()]
+    #[Assert\Positive()]
     private ?float $price = null;
 
     #[ORM\Column]
+    #[Assert\NotNull()]
+    #[Assert\PositiveOrZero()]
     private ?int $quantity = null;
 
     #[ORM\ManyToMany(targetEntity: Burger::class, mappedBy: 'ingredients')]
@@ -42,14 +56,26 @@ class Ingredient
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getNameen(): ?string
     {
-        return $this->name;
+        return $this->name_en;
     }
 
-    public function setName(string $name): self
+    public function setNameEn(string $name_en): self
     {
-        $this->name = $name;
+        $this->name_en = $name_en;
+
+        return $this;
+    }
+
+    public function getNameFr(): ?string
+    {
+        return $this->name_fr;
+    }
+
+    public function setNameFr(string $name_fr): self
+    {
+        $this->name_fr = $name_fr;
 
         return $this;
     }

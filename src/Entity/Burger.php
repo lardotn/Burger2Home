@@ -8,6 +8,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 
 #[ORM\Entity(repositoryClass: BurgerRepository::class)]
 class Burger
@@ -18,24 +20,64 @@ class Burger
     private ?int $id = null;
 
     #[Groups(['burgers:read', 'burgerDetail:read'])]
+    #[SerializedName('name')]
     #[ORM\Column(length: 50)]
-    private ?string $name = null;
+    #[Assert\NotBlank()]
+    #[Assert\Length(min: 2,max: 50)]
+    private ?string $name_en = null;
 
     #[Groups(['burgers:read', 'burgerDetail:read'])]
+    #[SerializedName('slug')]
+    #[ORM\Column(length: 50)]
+    #[Assert\NotBlank()]
+    #[Assert\Length(min: 2,max: 50)]
+    private ?string $slug_en = null;
+
+    #[Groups(['burgers:read', 'burgerDetail:read'])]
+    #[SerializedName('description')]
     #[ORM\Column(type: Types::TEXT)]
-    private ?string $description = null;
+    #[Assert\NotBlank()]
+    private ?string $description_en = null;
+
+    #[Groups(['burgers:read', 'burgerDetail:read'])]
+    #[SerializedName('name')]
+    #[ORM\Column(length: 50)]
+    #[Assert\NotBlank()]
+    #[Assert\Length(min: 2,max: 50)]
+    private ?string $name_fr = null;
+
+    #[Groups(['burgers:read', 'burgerDetail:read'])]
+    #[SerializedName('slug')]
+    #[ORM\Column(length: 50)]
+    #[Assert\NotBlank()]
+    #[Assert\Length(min: 2,max: 50)]
+    private ?string $slug_fr = null;
+
+    #[Groups(['burgers:read', 'burgerDetail:read'])]
+    #[SerializedName('description')]
+    #[ORM\Column(type: Types::TEXT)]
+    #[Assert\NotBlank()]
+    private ?string $description_fr = null;
 
     #[Groups(['burgers:read', 'burgerDetail:read'])]
     #[ORM\Column]
+    #[Assert\NotNull()]
+    #[Assert\Positive()]
     private ?float $price = null;
 
     #[Groups(['burgers:read', 'burgerDetail:read'])]
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $img_url = null;
+    private ?string $img_path = null;
 
     #[Groups(['burgers:read', 'burgerDetail:read'])]
     #[ORM\Column]
     private ?bool $is_active = null;
+
+    #[Groups(['burgers:read', 'burgerDetail:read'])]
+    #[ORM\Column]
+    #[Assert\NotNull()]
+    #[Assert\PositiveOrZero()]
+    private ?int $burgerPoint = null;
 
     #[Groups(['burgers:read'])]
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'burgers')]
@@ -55,26 +97,74 @@ class Burger
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getNameEn(): ?string
     {
-        return $this->name;
+        return $this->name_en;
     }
 
-    public function setName(string $name): self
+    public function setNameEn(string $name_en): self
     {
-        $this->name = $name;
+        $this->name_en = $name_en;
 
         return $this;
     }
 
-    public function getDescription(): ?string
+    public function getSlugEn(): ?string
     {
-        return $this->description;
+        return $this->slug_en;
     }
 
-    public function setDescription(string $description): self
+    public function setSlugEn(string $slug_en): self
     {
-        $this->description = $description;
+        $this->slug_en = $slug_en;
+
+        return $this;
+    }
+
+    public function getDescriptionEn(): ?string
+    {
+        return $this->description_en;
+    }
+
+    public function setDescriptionEn(string $description_en): self
+    {
+        $this->description_en = $description_en;
+
+        return $this;
+    }
+
+    public function getNameFr(): ?string
+    {
+        return $this->name_fr;
+    }
+
+    public function setNameFr(string $name_fr): self
+    {
+        $this->name_fr = $name_fr;
+
+        return $this;
+    }
+
+    public function getSlugFr(): ?string
+    {
+        return $this->slug_fr;
+    }
+
+    public function setSlugFr(string $slug_fr): self
+    {
+        $this->slug_fr = $slug_fr;
+
+        return $this;
+    }
+
+    public function getDescriptionFr(): ?string
+    {
+        return $this->description_fr;
+    }
+
+    public function setDescriptionFr(string $description_fr): self
+    {
+        $this->description_fr = $description_fr;
 
         return $this;
     }
@@ -91,14 +181,14 @@ class Burger
         return $this;
     }
 
-    public function getImgUrl(): ?string
+    public function getImgPath(): ?string
     {
-        return $this->img_url;
+        return $this->img_path;
     }
 
-    public function setImgUrl(?string $img_url): self
+    public function setImgPath(?string $img_path): self
     {
-        $this->img_url = $img_url;
+        $this->img_path = $img_path;
 
         return $this;
     }
@@ -111,6 +201,18 @@ class Burger
     public function setIsActive(bool $is_active): self
     {
         $this->is_active = $is_active;
+
+        return $this;
+    }
+
+    public function getBurgerPoint(): ?int
+    {
+        return $this->burgerPoint;
+    }
+
+    public function setBurgerPoint(?int $burgerPoint): self
+    {
+        $this->burgerPoint = $burgerPoint;
 
         return $this;
     }

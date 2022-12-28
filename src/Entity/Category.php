@@ -7,6 +7,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 class Category
@@ -17,8 +19,18 @@ class Category
     private ?int $id = null;
 
     #[Groups(['burgers:read', 'burgerDetail:read'])]
+    #[SerializedName('name')]
     #[ORM\Column(length: 50)]
-    private ?string $name = null;
+    #[Assert\NotBlank()]
+    #[Assert\Length(min: 2,max: 50)]
+    private ?string $name_en = null;
+
+    #[Groups(['burgers:read', 'burgerDetail:read'])]
+    #[SerializedName('name')]
+    #[ORM\Column(length: 50)]
+    #[Assert\NotBlank()]
+    #[Assert\Length(min: 2,max: 50)]
+    private ?string $name_fr = null;
 
     #[ORM\ManyToMany(targetEntity: Burger::class, mappedBy: 'categories')]
     private Collection $burgers;
@@ -33,14 +45,26 @@ class Category
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getNameEn(): ?string
     {
-        return $this->name;
+        return $this->name_en;
     }
 
-    public function setName(string $name): self
+    public function setNameEn(string $name_en): self
     {
-        $this->name = $name;
+        $this->name_en = $name_en;
+
+        return $this;
+    }
+
+    public function getNameFr(): ?string
+    {
+        return $this->name_fr;
+    }
+
+    public function setNameFr(string $name_fr): self
+    {
+        $this->name_fr = $name_fr;
 
         return $this;
     }
