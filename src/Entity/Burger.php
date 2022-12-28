@@ -37,13 +37,17 @@ class Burger
     #[ORM\Column]
     private ?bool $is_active = null;
 
-    #[Groups('burgers:read')]
+    #[Groups(['burgers:read'])]
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'burgers')]
     private Collection $categories;
+
+    #[ORM\ManyToMany(targetEntity: Ingredient::class, inversedBy: 'burgers')]
+    private Collection $ingredients;
 
     public function __construct()
     {
         $this->categories = new ArrayCollection();
+        $this->ingredients = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -128,6 +132,27 @@ class Burger
     public function removeCategory(Category $category): self
     {
         $this->categories->removeElement($category);
+
+        return $this;
+    }
+
+    public function getIngredients(): Collection
+    {
+        return $this->ingredients;
+    }
+
+    public function addIngredient(Ingredient $ingredient): self
+    {
+        if (!$this->ingredients->contains($ingredient)) {
+            $this->ingredients[] = $ingredient;
+        }
+
+        return $this;
+    }
+
+    public function removeIngredient(Ingredient $ingredient): self
+    {
+        $this->ingredients->removeElement($ingredient);
 
         return $this;
     }

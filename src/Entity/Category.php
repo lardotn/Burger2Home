@@ -6,7 +6,6 @@ use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping\JoinTable;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
@@ -17,12 +16,11 @@ class Category
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups('burgers:read')]
+    #[Groups(['burgers:read', 'burgerDetail:read'])]
     #[ORM\Column(length: 50)]
     private ?string $name = null;
 
-    #[ORM\ManyToMany(targetEntity: Burger::class, inversedBy: 'categories')]
-    #[JoinTable(name: 'categories_burgers')]
+    #[ORM\ManyToMany(targetEntity: Burger::class, mappedBy: 'categories')]
     private Collection $burgers;
 
     public function __construct()
@@ -62,7 +60,7 @@ class Category
         return $this;
     }
 
-    public function removerBurger(Burger $burger): self
+    public function removeBurger(Burger $burger): self
     {
         if (!$this->burgers->contains($burger)) {
             $burger->removeCategory($this);
