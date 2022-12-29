@@ -52,8 +52,10 @@ class BurgersController extends AbstractController
 
         foreach ($burger->getIngredients() as $elm) 
         {
-            if (count($elm->getAllergens()) > 0) {
-                $allergens[] = $elm->getAllergens()[0];
+            foreach ($elm->getAllergens() as $all) {
+                if (!in_array($all, $allergens)) {
+                    $allergens[] = $all;
+                }
             }
         }
 

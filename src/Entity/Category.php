@@ -27,26 +27,24 @@ class Category
     #[Assert\Length(min: 2,max: 50)]
     private ?string $name = null;
 
-    #[Groups(['categories:read'])]
+    #[Groups(['categories:read', 'burgers:read', 'burgerDetail:read', 'categoryDetail:read',])]
     #[ORM\Column(length: 50)]
     private ?string $slug = null;
+    
+    // #[Groups(['burgers:read', 'burgerDetail:read'])]
+    // #[SerializedName('name')]
+    // #[ORM\Column(length: 50)]
+    // #[Assert\NotBlank()]
+    // #[Assert\Length(min: 2,max: 50)]
+    // private ?string $name_en = null;
 
-/*
-    #[Groups(['burgers:read', 'burgerDetail:read'])]
-    #[SerializedName('name')]
-    #[ORM\Column(length: 50)]
-    #[Assert\NotBlank()]
-    #[Assert\Length(min: 2,max: 50)]
-    private ?string $name_en = null;
-
-    #[Groups(['burgers:read', 'burgerDetail:read'])]
-    #[SerializedName('name')]
-    #[ORM\Column(length: 50)]
-    #[Assert\NotBlank()]
-    #[Assert\Length(min: 2,max: 50)]
-    private ?string $name_fr = null;
-*/
-
+    // #[Groups(['burgers:read', 'burgerDetail:read'])]
+    // #[SerializedName('name')]
+    // #[ORM\Column(length: 50)]
+    // #[Assert\NotBlank()]
+    // #[Assert\Length(min: 2,max: 50)]
+    // private ?string $name_fr = null;
+    
     #[Groups(['categoryDetail:read'])]
     #[ORM\ManyToMany(targetEntity: Burger::class, mappedBy: 'categories')]
     private Collection $burgers;
@@ -78,33 +76,31 @@ class Category
 
         return $this;
     }
+    
+    // public function getNameEn(): ?string
+    // {
+    //     return $this->name_en;
+    // }
 
-/*
-    public function getNameEn(): ?string
-    {
-        return $this->name_en;
-    }
+    // public function setNameEn(string $name_en): self
+    // {
+    //     $this->name_en = $name_en;
 
-    public function setNameEn(string $name_en): self
-    {
-        $this->name_en = $name_en;
+    //     return $this;
+    // }
 
-        return $this;
-    }
+    // public function getNameFr(): ?string
+    // {
+    //     return $this->name_fr;
+    // }
 
-    public function getNameFr(): ?string
-    {
-        return $this->name_fr;
-    }
+    // public function setNameFr(string $name_fr): self
+    // {
+    //     $this->name_fr = $name_fr;
 
-    public function setNameFr(string $name_fr): self
-    {
-        $this->name_fr = $name_fr;
-
-        return $this;
-    }
-*/
-
+    //     return $this;
+    // }
+    
     public function getSlug(): ?string
     {
         return $this->slug;

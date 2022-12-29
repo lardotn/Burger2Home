@@ -37,49 +37,47 @@ class Burger
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\NotBlank()]
     private ?string $description = null;
+    
+    // #[Groups(['burgers:read', 'burgerDetail:read'])]
+    // //#[SerializedName('name')]
+    // #[ORM\Column(length: 50)]
+    // #[Assert\NotBlank()]
+    // #[Assert\Length(min: 2,max: 50)]
+    // private ?string $name_en = null;
 
-/*
-    #[Groups(['burgers:read', 'burgerDetail:read'])]
-    //#[SerializedName('name')]
-    #[ORM\Column(length: 50)]
-    #[Assert\NotBlank()]
-    #[Assert\Length(min: 2,max: 50)]
-    private ?string $name_en = null;
+    // #[Groups(['burgers:read', 'burgerDetail:read'])]
+    // //#[SerializedName('slug')]
+    // #[ORM\Column(length: 50)]
+    // #[Assert\NotBlank()]
+    // #[Assert\Length(min: 2,max: 50)]
+    // private ?string $slug_en = null;
 
-    #[Groups(['burgers:read', 'burgerDetail:read'])]
-    //#[SerializedName('slug')]
-    #[ORM\Column(length: 50)]
-    #[Assert\NotBlank()]
-    #[Assert\Length(min: 2,max: 50)]
-    private ?string $slug_en = null;
+    // #[Groups(['burgers:read', 'burgerDetail:read'])]
+    // //#[SerializedName('description')]
+    // #[ORM\Column(type: Types::TEXT)]
+    // #[Assert\NotBlank()]
+    // private ?string $description_en = null;
 
-    #[Groups(['burgers:read', 'burgerDetail:read'])]
-    //#[SerializedName('description')]
-    #[ORM\Column(type: Types::TEXT)]
-    #[Assert\NotBlank()]
-    private ?string $description_en = null;
+    // #[Groups(['burgers:read', 'burgerDetail:read'])]
+    // //#[SerializedName('name')]
+    // #[ORM\Column(length: 50)]
+    // #[Assert\NotBlank()]
+    // #[Assert\Length(min: 2,max: 50)]
+    // private ?string $name_fr = null;
 
-    #[Groups(['burgers:read', 'burgerDetail:read'])]
-    //#[SerializedName('name')]
-    #[ORM\Column(length: 50)]
-    #[Assert\NotBlank()]
-    #[Assert\Length(min: 2,max: 50)]
-    private ?string $name_fr = null;
+    // #[Groups(['burgers:read', 'burgerDetail:read'])]
+    // //#[SerializedName('slug')]
+    // #[ORM\Column(length: 50)]
+    // #[Assert\NotBlank()]
+    // #[Assert\Length(min: 2,max: 50)]
+    // private ?string $slug_fr = null;
 
-    #[Groups(['burgers:read', 'burgerDetail:read'])]
-    //#[SerializedName('slug')]
-    #[ORM\Column(length: 50)]
-    #[Assert\NotBlank()]
-    #[Assert\Length(min: 2,max: 50)]
-    private ?string $slug_fr = null;
-
-    #[Groups(['burgers:read', 'burgerDetail:read'])]
-    //#[SerializedName('description')]
-    #[ORM\Column(type: Types::TEXT)]
-    #[Assert\NotBlank()]
-    private ?string $description_fr = null;
-*/
-
+    // #[Groups(['burgers:read', 'burgerDetail:read'])]
+    // //#[SerializedName('description')]
+    // #[ORM\Column(type: Types::TEXT)]
+    // #[Assert\NotBlank()]
+    // private ?string $description_fr = null;
+    
     #[Groups(['burgers:read', 'burgerDetail:read', 'ingredientDetail:read', 'categoryDetail:read'])]
     #[ORM\Column]
     #[Assert\NotNull()]
@@ -108,7 +106,7 @@ class Burger
     #[Assert\PositiveOrZero()]
     private ?int $burgerPoint = null;
 
-    #[Groups(['burgers:read', 'burgerDetail:read'])]
+    #[Groups(['burgers:read'])]
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'burgers')]
     private Collection $categories;
     
@@ -160,81 +158,79 @@ class Burger
 
         return $this;
     }
+    
+    // public function getNameEn(): ?string
+    // {
+    //     return $this->name_en;
+    // }
 
-/*
-    public function getNameEn(): ?string
-    {
-        return $this->name_en;
-    }
+    // public function setNameEn(string $name_en): self
+    // {
+    //     $this->name_en = $name_en;
 
-    public function setNameEn(string $name_en): self
-    {
-        $this->name_en = $name_en;
+    //     return $this;
+    // }
 
-        return $this;
-    }
+    // public function getSlugEn(): ?string
+    // {
+    //     return $this->slug_en;
+    // }
 
-    public function getSlugEn(): ?string
-    {
-        return $this->slug_en;
-    }
+    // public function setSlugEn(string $slug_en): self
+    // {
+    //     $this->slug_en = $slug_en;
 
-    public function setSlugEn(string $slug_en): self
-    {
-        $this->slug_en = $slug_en;
+    //     return $this;
+    // }
 
-        return $this;
-    }
+    // public function getDescriptionEn(): ?string
+    // {
+    //     return $this->description_en;
+    // }
 
-    public function getDescriptionEn(): ?string
-    {
-        return $this->description_en;
-    }
+    // public function setDescriptionEn(string $description_en): self
+    // {
+    //     $this->description_en = $description_en;
 
-    public function setDescriptionEn(string $description_en): self
-    {
-        $this->description_en = $description_en;
+    //     return $this;
+    // }
 
-        return $this;
-    }
+    // public function getNameFr(): ?string
+    // {
+    //     return $this->name_fr;
+    // }
 
-    public function getNameFr(): ?string
-    {
-        return $this->name_fr;
-    }
+    // public function setNameFr(string $name_fr): self
+    // {
+    //     $this->name_fr = $name_fr;
 
-    public function setNameFr(string $name_fr): self
-    {
-        $this->name_fr = $name_fr;
+    //     return $this;
+    // }
 
-        return $this;
-    }
+    // public function getSlugFr(): ?string
+    // {
+    //     return $this->slug_fr;
+    // }
 
-    public function getSlugFr(): ?string
-    {
-        return $this->slug_fr;
-    }
+    // public function setSlugFr(string $slug_fr): self
+    // {
+    //     $this->slug_fr = $slug_fr;
 
-    public function setSlugFr(string $slug_fr): self
-    {
-        $this->slug_fr = $slug_fr;
+    //     return $this;
+    // }
 
-        return $this;
-    }
+    // public function getDescriptionFr(): ?string
+    // {
+    //     return $this->description_fr;
+    // }
 
-    public function getDescriptionFr(): ?string
-    {
-        return $this->description_fr;
-    }
+    // public function setDescriptionFr(string $description_fr): self
+    // {
+    //     $this->description_fr = $description_fr;
 
-    public function setDescriptionFr(string $description_fr): self
-    {
-        $this->description_fr = $description_fr;
-
-        return $this;
-    }
-*/
-
+    //     return $this;
+    // }
+    
     public function getBasePrice(): ?float
     {
         return $this->basePrice;
