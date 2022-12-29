@@ -2,15 +2,17 @@
 
 namespace App\Entity;
 
+use Cocur\Slugify\Slugify;
+use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Serializer\Annotation\SerializedName;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
+#[HasLifecycleCallbacks]
 class Category
 {
     #[ORM\Id]
@@ -18,6 +20,16 @@ class Category
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(['burgers:read', 'burgerDetail:read'])]
+    #[ORM\Column(length: 50)]
+    #[Assert\NotBlank()]
+    #[Assert\Length(min: 2,max: 50)]
+    private ?string $name = null;
+
+    #[ORM\Column(length: 50)]
+    private ?string $slug = null;
+
+/*
     #[Groups(['burgers:read', 'burgerDetail:read'])]
     #[SerializedName('name')]
     #[ORM\Column(length: 50)]
@@ -31,6 +43,7 @@ class Category
     #[Assert\NotBlank()]
     #[Assert\Length(min: 2,max: 50)]
     private ?string $name_fr = null;
+*/
 
     #[ORM\ManyToMany(targetEntity: Burger::class, mappedBy: 'categories')]
     private Collection $burgers;
@@ -40,11 +53,30 @@ class Category
         $this->burgers = new ArrayCollection();
     }
 
+    #[ORM\PrePersist]
+    public function prePersist()
+    {
+        $this->slug = (new Slugify())->slugify($this->name);
+    }
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+/*
     public function getNameEn(): ?string
     {
         return $this->name_en;
@@ -67,6 +99,12 @@ class Category
         $this->name_fr = $name_fr;
 
         return $this;
+    }
+*/
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
     }
 
     public function getBurgers(): Collection

@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20221228195657 extends AbstractMigration
+final class Version20221229193010 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -24,16 +24,17 @@ final class Version20221228195657 extends AbstractMigration
         $this->addSql('CREATE SEQUENCE burger_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE category_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE ingredient_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE TABLE allergen (id INT NOT NULL, name_en VARCHAR(50) NOT NULL, name_fr VARCHAR(50) NOT NULL, PRIMARY KEY(id))');
-        $this->addSql('CREATE TABLE burger (id INT NOT NULL, name_en VARCHAR(50) NOT NULL, slug_en VARCHAR(50) NOT NULL, description_en TEXT NOT NULL, name_fr VARCHAR(50) NOT NULL, slug_fr VARCHAR(50) NOT NULL, description_fr TEXT NOT NULL, price DOUBLE PRECISION NOT NULL, img_path VARCHAR(255) DEFAULT NULL, is_active BOOLEAN NOT NULL, burger_point INT NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE allergen (id INT NOT NULL, name VARCHAR(50) NOT NULL, slug VARCHAR(50) NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE burger (id INT NOT NULL, name VARCHAR(50) NOT NULL, slug VARCHAR(50) NOT NULL, description TEXT NOT NULL, base_price DOUBLE PRECISION NOT NULL, promo_price DOUBLE PRECISION NOT NULL, img_path VARCHAR(255) DEFAULT NULL, is_active BOOLEAN NOT NULL, burger_point INT NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE UNIQUE INDEX UNIQ_EFE35A0D5E237E06 ON burger (name)');
         $this->addSql('CREATE TABLE burger_category (burger_id INT NOT NULL, category_id INT NOT NULL, PRIMARY KEY(burger_id, category_id))');
         $this->addSql('CREATE INDEX IDX_C87F412517CE5090 ON burger_category (burger_id)');
         $this->addSql('CREATE INDEX IDX_C87F412512469DE2 ON burger_category (category_id)');
         $this->addSql('CREATE TABLE burger_ingredient (burger_id INT NOT NULL, ingredient_id INT NOT NULL, PRIMARY KEY(burger_id, ingredient_id))');
         $this->addSql('CREATE INDEX IDX_340D596D17CE5090 ON burger_ingredient (burger_id)');
         $this->addSql('CREATE INDEX IDX_340D596D933FE08C ON burger_ingredient (ingredient_id)');
-        $this->addSql('CREATE TABLE category (id INT NOT NULL, name_en VARCHAR(50) NOT NULL, name_fr VARCHAR(50) NOT NULL, PRIMARY KEY(id))');
-        $this->addSql('CREATE TABLE ingredient (id INT NOT NULL, name_en VARCHAR(50) NOT NULL, name_fr VARCHAR(50) NOT NULL, price DOUBLE PRECISION NOT NULL, quantity INT NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE category (id INT NOT NULL, name VARCHAR(50) NOT NULL, slug VARCHAR(50) NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE ingredient (id INT NOT NULL, name VARCHAR(50) NOT NULL, slug VARCHAR(50) NOT NULL, price DOUBLE PRECISION NOT NULL, quantity INT NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE ingredient_allergen (ingredient_id INT NOT NULL, allergen_id INT NOT NULL, PRIMARY KEY(ingredient_id, allergen_id))');
         $this->addSql('CREATE INDEX IDX_57B95840933FE08C ON ingredient_allergen (ingredient_id)');
         $this->addSql('CREATE INDEX IDX_57B958406E775A4A ON ingredient_allergen (allergen_id)');

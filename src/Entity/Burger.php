@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Cocur\Slugify\Slugify;
+use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 use App\Repository\BurgerRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -12,6 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 
 #[ORM\Entity(repositoryClass: BurgerRepository::class)]
+#[HasLifecycleCallbacks]
 class Burger
 {
     #[ORM\Id]
@@ -20,56 +23,82 @@ class Burger
     private ?int $id = null;
 
     #[Groups(['burgers:read', 'burgerDetail:read'])]
-    #[SerializedName('name')]
+    #[ORM\Column(type: 'string', length: 50, unique: true)]
+    #[Assert\NotBlank()]
+    #[Assert\Length(min: 2,max: 50)]
+    private ?string $name = null;
+
+    #[Groups(['burgers:read', 'burgerDetail:read'])]
+    #[ORM\Column(length: 50)]
+    private ?string $slug = null;
+
+    #[Groups(['burgers:read', 'burgerDetail:read'])]
+    #[ORM\Column(type: Types::TEXT)]
+    #[Assert\NotBlank()]
+    private ?string $description = null;
+
+/*
+    #[Groups(['burgers:read', 'burgerDetail:read'])]
+    //#[SerializedName('name')]
     #[ORM\Column(length: 50)]
     #[Assert\NotBlank()]
     #[Assert\Length(min: 2,max: 50)]
     private ?string $name_en = null;
 
     #[Groups(['burgers:read', 'burgerDetail:read'])]
-    #[SerializedName('slug')]
+    //#[SerializedName('slug')]
     #[ORM\Column(length: 50)]
     #[Assert\NotBlank()]
     #[Assert\Length(min: 2,max: 50)]
     private ?string $slug_en = null;
 
     #[Groups(['burgers:read', 'burgerDetail:read'])]
-    #[SerializedName('description')]
+    //#[SerializedName('description')]
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\NotBlank()]
     private ?string $description_en = null;
 
     #[Groups(['burgers:read', 'burgerDetail:read'])]
-    #[SerializedName('name')]
+    //#[SerializedName('name')]
     #[ORM\Column(length: 50)]
     #[Assert\NotBlank()]
     #[Assert\Length(min: 2,max: 50)]
     private ?string $name_fr = null;
 
+    
     #[Groups(['burgers:read', 'burgerDetail:read'])]
-    #[SerializedName('slug')]
+    //#[SerializedName('slug')]
     #[ORM\Column(length: 50)]
     #[Assert\NotBlank()]
     #[Assert\Length(min: 2,max: 50)]
     private ?string $slug_fr = null;
 
     #[Groups(['burgers:read', 'burgerDetail:read'])]
-    #[SerializedName('description')]
+    //#[SerializedName('description')]
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\NotBlank()]
     private ?string $description_fr = null;
+*/
 
     #[Groups(['burgers:read', 'burgerDetail:read'])]
     #[ORM\Column]
     #[Assert\NotNull()]
     #[Assert\Positive()]
-    private ?float $price = null;
+    private ?float $basePrice = null;
 
     #[Groups(['burgers:read', 'burgerDetail:read'])]
+    #[ORM\Column]
+    #[Assert\NotNull()]
+    #[Assert\Positive()]
+    private ?float $promoPrice = null;
+
+    #[Groups(['burgers:read', 'burgerDetail:read'])]
+    #[SerializedName('imgPath')]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $img_path = null;
 
     #[Groups(['burgers:read', 'burgerDetail:read'])]
+    #[SerializedName('isActive')]
     #[ORM\Column]
     private ?bool $is_active = null;
 
@@ -92,11 +121,47 @@ class Burger
         $this->ingredients = new ArrayCollection();
     }
 
+    #[ORM\PrePersist]
+    public function prePersist()
+    {
+        $this->slug = (new Slugify())->slugify($this->name);
+    }
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(string $description): self
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+/*
     public function getNameEn(): ?string
     {
         return $this->name_en;
@@ -168,15 +233,28 @@ class Burger
 
         return $this;
     }
+*/
 
-    public function getPrice(): ?float
+    public function getBasePrice(): ?float
     {
-        return $this->price;
+        return $this->basePrice;
     }
 
-    public function setPrice(float $price): self
+    public function setBasePrice(float $basePrice): self
     {
-        $this->price = $price;
+        $this->basePrice = $basePrice;
+
+        return $this;
+    }
+
+    public function getPromoPrice(): ?float
+    {
+        return $this->promoPrice;
+    }
+
+    public function setPromoPrice(float $promoPrice): self
+    {
+        $this->promoPrice = $promoPrice;
 
         return $this;
     }
