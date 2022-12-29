@@ -39,6 +39,7 @@ class Allergen
 */
 
     #[ORM\ManytoMany(targetEntity: Ingredient::class, mappedBy: 'allergers')]
+    #[ORM\ManyToMany(targetEntity: Ingredient::class, mappedBy: 'allergens')]
     private Collection $ingredients;
 
     public function __construct()
