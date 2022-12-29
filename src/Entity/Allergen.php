@@ -14,15 +14,17 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[HasLifecycleCallbacks]
 class Allergen
 {
+    #[Groups(['allergensDetail:read'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['burgerDetail:read'])]
+    #[Groups(['allergens:read', 'allergensDetail:read', 'burgerDetail:read', 'ingredientDetail:read'])]
     #[ORM\Column(length: 50)]
     private ?string $name = null;
 
+    #[Groups(['allergens:read', 'allergensDetail:read', 'burgerDetail:read', 'ingredientDetail:read'])]
     #[ORM\Column(length: 50)]
     private ?string $slug = null;
 
@@ -38,7 +40,8 @@ class Allergen
     private ?string $name_fr = null;
 */
 
-    #[ORM\ManytoMany(targetEntity: Ingredient::class, mappedBy: 'allergers')]
+    #[Groups(['allergensDetail:read'])]
+    #[ORM\ManyToMany(targetEntity: Ingredient::class, mappedBy: 'allergens')]
     private Collection $ingredients;
 
     public function __construct()
@@ -100,7 +103,7 @@ class Allergen
         return $this->slug;
     }
 
-    public function getIngredient(): Collection
+    public function getIngredients(): Collection
     {
         return $this->ingredients;
     }

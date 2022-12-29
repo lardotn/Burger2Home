@@ -15,17 +15,19 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[HasLifecycleCallbacks]
 class Category
 {
+    #[Groups(['categoryDetail:read'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['burgers:read', 'burgerDetail:read'])]
+    #[Groups(['categories:read', 'categoryDetail:read', 'burgers:read', 'burgerDetail:read'])]
     #[ORM\Column(length: 50)]
     #[Assert\NotBlank()]
     #[Assert\Length(min: 2,max: 50)]
     private ?string $name = null;
 
+    #[Groups(['categories:read'])]
     #[ORM\Column(length: 50)]
     private ?string $slug = null;
 
@@ -45,6 +47,7 @@ class Category
     private ?string $name_fr = null;
 */
 
+    #[Groups(['categoryDetail:read'])]
     #[ORM\ManyToMany(targetEntity: Burger::class, mappedBy: 'categories')]
     private Collection $burgers;
 

@@ -17,22 +17,23 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
 #[HasLifecycleCallbacks]
 class Burger
 {
+    #[Groups(['burgerDetail:read', 'ingredientDetail:read', 'categoryDetail:read'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['burgers:read', 'burgerDetail:read'])]
+    #[Groups(['burgers:read', 'burgerDetail:read', 'ingredientDetail:read', 'categoryDetail:read'])]
     #[ORM\Column(type: 'string', length: 50, unique: true)]
     #[Assert\NotBlank()]
     #[Assert\Length(min: 2,max: 50)]
     private ?string $name = null;
 
-    #[Groups(['burgers:read', 'burgerDetail:read'])]
+    #[Groups(['burgers:read', 'burgerDetail:read', 'ingredientDetail:read', 'categoryDetail:read'])]
     #[ORM\Column(length: 50)]
     private ?string $slug = null;
 
-    #[Groups(['burgers:read', 'burgerDetail:read'])]
+    #[Groups(['burgers:read', 'burgerDetail:read', 'ingredientDetail:read', 'categoryDetail:read'])]
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\NotBlank()]
     private ?string $description = null;
@@ -65,7 +66,6 @@ class Burger
     #[Assert\Length(min: 2,max: 50)]
     private ?string $name_fr = null;
 
-    
     #[Groups(['burgers:read', 'burgerDetail:read'])]
     //#[SerializedName('slug')]
     #[ORM\Column(length: 50)]
@@ -80,38 +80,38 @@ class Burger
     private ?string $description_fr = null;
 */
 
-    #[Groups(['burgers:read', 'burgerDetail:read'])]
+    #[Groups(['burgers:read', 'burgerDetail:read', 'ingredientDetail:read', 'categoryDetail:read'])]
     #[ORM\Column]
     #[Assert\NotNull()]
     #[Assert\Positive()]
     private ?float $basePrice = null;
 
-    #[Groups(['burgers:read', 'burgerDetail:read'])]
+    #[Groups(['burgers:read', 'burgerDetail:read', 'ingredientDetail:read', 'categoryDetail:read'])]
     #[ORM\Column]
     #[Assert\NotNull()]
     #[Assert\Positive()]
     private ?float $promoPrice = null;
 
-    #[Groups(['burgers:read', 'burgerDetail:read'])]
+    #[Groups(['burgers:read', 'burgerDetail:read', 'ingredientDetail:read', 'categoryDetail:read'])]
     #[SerializedName('imgPath')]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $img_path = null;
 
-    #[Groups(['burgers:read', 'burgerDetail:read'])]
+    #[Groups(['burgers:read', 'burgerDetail:read', 'ingredientDetail:read', 'categoryDetail:read'])]
     #[SerializedName('isActive')]
     #[ORM\Column]
     private ?bool $is_active = null;
 
-    #[Groups(['burgers:read', 'burgerDetail:read'])]
+    #[Groups(['burgers:read', 'burgerDetail:read', 'ingredientDetail:read', 'categoryDetail:read'])]
     #[ORM\Column]
     #[Assert\NotNull()]
     #[Assert\PositiveOrZero()]
     private ?int $burgerPoint = null;
 
-    #[Groups(['burgers:read'])]
+    #[Groups(['burgers:read', 'burgerDetail:read'])]
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'burgers')]
     private Collection $categories;
-
+    
     #[ORM\ManyToMany(targetEntity: Ingredient::class, inversedBy: 'burgers')]
     private Collection $ingredients;
 

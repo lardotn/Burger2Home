@@ -9,21 +9,25 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: IngredientRepository::class)]
 #[HasLifecycleCallbacks]
 class Ingredient
 {
+    #[Groups(['ingredientDetail:read', 'allergensDetail:read'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(['ingredients:read','ingredientDetail:read', 'burgerDetail:read', 'allergensDetail:read'])]
     #[ORM\Column(length: 50)]
     #[Assert\NotBlank()]
     #[Assert\Length(min: 2,max: 50)]
     private ?string $name = null;
 
+    #[Groups(['ingredients:read','ingredientDetail:read', 'burgerDetail:read', 'allergensDetail:read'])]
     #[ORM\Column(length: 50)]
     private ?string $slug = null;
 
@@ -41,19 +45,23 @@ class Ingredient
     private ?string $name_fr = null;
 */
 
+    #[Groups(['ingredients:read','ingredientDetail:read', 'burgerDetail:read', 'allergensDetail:read'])]
     #[ORM\Column]
     #[Assert\NotNull()]
     #[Assert\Positive()]
     private ?float $price = null;
 
+    #[Groups(['ingredients:read','ingredientDetail:read', 'burgerDetail:read', 'allergensDetail:read'])]
     #[ORM\Column]
     #[Assert\NotNull()]
     #[Assert\PositiveOrZero()]
     private ?int $quantity = null;
 
+    #[Groups(['ingredientDetail:read'])]
     #[ORM\ManyToMany(targetEntity: Burger::class, mappedBy: 'ingredients')]
     private Collection $burgers;
 
+    #[Groups(['ingredientDetail:read', 'burgerDetail:read'])]
     #[ORM\ManyToMany(targetEntity: Allergen::class, inversedBy: 'ingredients')]
     private Collection $allergens;
 
@@ -174,6 +182,7 @@ class Ingredient
     {
         if (!$this->allergens->contains($allergen)) {
             $this->allergens[] = $allergen;
+            $allergen->addIngredient($this);
         }
 
         return $this;
@@ -181,7 +190,9 @@ class Ingredient
 
     public function removeAllergen(Allergen $allergen): self
     {
-        $this->allergens->removeElement($allergen);
+        if (!$this->allergens->contains($allergen)) {
+            $allergen->removeIngredient($this);
+        }
 
         return $this;
     }
