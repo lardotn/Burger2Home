@@ -29,7 +29,7 @@ class UsersController extends AbstractController
 
             $user = $serializer->deserialize($jsonRecu, User::class, 'json');
     
-            $user->setEmail(trim($user->getEmail()));
+            $user->setEmail(trim(htmlspecialchars($user->getEmail())));
             $user->setPassword(trim($user->getPassword()));
     
             $hashedPassword = $passwordHasher->hashPassword(
@@ -48,7 +48,7 @@ class UsersController extends AbstractController
             $em->persist($user);
             $em->flush();
     
-            return $this->json($user, 201);
+            return $this->json(201);
         } catch (Exception $e) {
             return $this->json(['status' => 400, 'message' => $e], 400);
         }
