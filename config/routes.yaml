@@ -6,3 +6,5 @@ controllers:
 
 api_login_check:
     path: /signin
+jwt_refresh:
+    path: /refresh

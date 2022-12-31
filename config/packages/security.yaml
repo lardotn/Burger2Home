@@ -27,6 +27,9 @@ security:
             pattern: ^/
             stateless: true
             jwt: ~
+            entry_point: jwt
+            refresh_jwt:
+                check_path: jwt_refresh
         main:
             lazy: true
             provider: app_user_provider
@@ -47,9 +50,12 @@ security:
         - { path: ^/allergens, roles: PUBLIC_ACCESS }
         - { path: ^/categories, roles: PUBLIC_ACCESS }
         - { path: ^/ingredients, roles: PUBLIC_ACCESS }
+        - { path: ^/signin, roles: PUBLIC_ACCESS }
+        - { path: ^/signup, roles: PUBLIC_ACCESS }
+        - { path: ^/refresh, roles: PUBLIC_ACCESS }
         - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/users, roles: ROLE_ADMIN }
-        - { path: ^/signup, roles: PUBLIC_ACCESS }
+        - { path: ^/users/current, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:
     security:
