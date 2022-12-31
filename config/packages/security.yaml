@@ -13,23 +13,20 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-
         login:
-            pattern: ^/api/login
+            pattern: ^/signin
             stateless: true
             provider: app_user_provider
             json_login:
-                check_path: /api/login_check
+                check_path: /signin
                 username_path: email
                 password_path: password
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
-
         api:
-            pattern:   ^/api
+            pattern: ^/
             stateless: true
             jwt: ~
-        
         main:
             lazy: true
             provider: app_user_provider
@@ -45,8 +42,14 @@ security:
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
-        - { path: ^/api/login, roles: PUBLIC_ACCESS }
-        - { path: ^/api,       roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/home, roles: PUBLIC_ACCESS }
+        - { path: ^/burgers, roles: PUBLIC_ACCESS }
+        - { path: ^/allergens, roles: PUBLIC_ACCESS }
+        - { path: ^/categories, roles: PUBLIC_ACCESS }
+        - { path: ^/ingredients, roles: PUBLIC_ACCESS }
+        - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/users, roles: ROLE_ADMIN }
+        - { path: ^/signup, roles: PUBLIC_ACCESS }
 
 when@test:
     security:
