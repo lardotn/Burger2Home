@@ -57,6 +57,6 @@ class UsersController extends AbstractController
     #[Route('/users/current', name: 'app_users_current', methods: ['GET'])]
     public function getCurrentUser(#[CurrentUser] User $user): JsonResponse
     {
-        return $this->json($user, 200);
+        return $this->json($user, 200, [], ['groups' => 'userDetail:read']);
     }
 }

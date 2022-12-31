@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -19,16 +20,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(['userDetail:read'])]
     #[ORM\Column(length: 180, unique: true)]
     #[Assert\Length(min: 6,max: 180)]
     #[Assert\Email(mode: 'html5')]
     private ?string $email = null;
 
+    #[Groups(['userDetail:read'])]
     #[ORM\Column(type: 'string', length: 100)]
     #[Assert\NotBlank()]
     #[Assert\Length(min: 3,max: 100)]
     private ?string $first_name = null;
 
+    #[Groups(['userDetail:read'])]
     #[ORM\Column(type: 'string', length: 100)]
     #[Assert\NotBlank()]
     #[Assert\Length(min: 3,max: 100)]
@@ -37,6 +41,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Assert\Length(max: 255)]
     private ?string $avatar = null;
+
+    #[Groups(['userDetail:read'])]
+    #[ORM\Column]
+    #[Assert\NotNull()]
+    #[Assert\PositiveOrZero()]
+    private ?int $fidelityPoint = null;
 
     #[ORM\Column]
     private array $roles = [];
@@ -58,6 +68,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function __construct()
     {
+        $this->fidelityPoint = 0;
         $this->createdAt = new \DateTimeImmutable();
         $this->updatedAt = new \DateTimeImmutable();
     }
@@ -128,6 +139,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getAvatar(): ?string
     {
         return $this->avatar;
+    }
+
+    public function getFidelityPoint(): ?int
+    {
+        return $this->fidelityPoint;
+    }
+
+    public function setFidelityPoint(?int $fidelityPoint): self
+    {
+        $this->fidelityPoint = $fidelityPoint;
+
+        return $this;
     }
 
     /**
