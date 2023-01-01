@@ -28,24 +28,30 @@ class UsersController extends AbstractController
             $jsonRecu = $request->getContent();
 
             $user = $serializer->deserialize($jsonRecu, User::class, 'json');
+
+            $newUser = new User();
     
-            $user->setEmail(trim(htmlspecialchars($user->getEmail())));
-            $user->setPassword(trim($user->getPassword()));
+            $newUser->setEmail(trim(htmlspecialchars($user->getEmail())));
+            $newUser->setFirstName(trim(htmlspecialchars($user->getFirstName())));
+            $newUser->setLastName(trim(htmlspecialchars($user->getLastName())));
+            $newUser->setPassword(trim($user->getPassword()));
     
             $hashedPassword = $passwordHasher->hashPassword(
                 $user,
                 $user->getPassword()
             );
-            $user->setPassword($hashedPassword);
-            $user->setRoles(['ROLE_USER']);
+            $newUser->setPassword($hashedPassword);
+
+            $newUser->setFidelityPoint(0);
+            $newUser->setRoles(['ROLE_USER']);
     
-            $errors = $validator->validate($user);
+            $errors = $validator->validate($newUser);
     
             if (count($errors) > 0) {
                 return $this->json($errors, 400);
             }
     
-            $em->persist($user);
+            $em->persist($newUser);
             $em->flush();
     
             return $this->json(201);
