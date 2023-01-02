@@ -28,27 +28,33 @@ class UsersController extends AbstractController
             $jsonRecu = $request->getContent();
 
             $user = $serializer->deserialize($jsonRecu, User::class, 'json');
+
+            $newUser = new User();
     
-            $user->setEmail(trim($user->getEmail()));
-            $user->setPassword(trim($user->getPassword()));
+            $newUser->setEmail(trim(htmlspecialchars($user->getEmail())));
+            $newUser->setFirstName(trim(htmlspecialchars($user->getFirstName())));
+            $newUser->setLastName(trim(htmlspecialchars($user->getLastName())));
+            $newUser->setPassword(trim($user->getPassword()));
     
             $hashedPassword = $passwordHasher->hashPassword(
                 $user,
                 $user->getPassword()
             );
-            $user->setPassword($hashedPassword);
-            $user->setRoles(['ROLE_USER']);
+            $newUser->setPassword($hashedPassword);
+
+            $newUser->setFidelityPoint(0);
+            $newUser->setRoles(['ROLE_USER']);
     
-            $errors = $validator->validate($user);
+            $errors = $validator->validate($newUser);
     
             if (count($errors) > 0) {
                 return $this->json($errors, 400);
             }
     
-            $em->persist($user);
+            $em->persist($newUser);
             $em->flush();
     
-            return $this->json($user, 201);
+            return $this->json(201);
         } catch (Exception $e) {
             return $this->json(['status' => 400, 'message' => $e], 400);
         }
@@ -57,6 +63,6 @@ class UsersController extends AbstractController
     #[Route('/users/current', name: 'app_users_current', methods: ['GET'])]
     public function getCurrentUser(#[CurrentUser] User $user): JsonResponse
     {
-        return $this->json($user, 200);
+        return $this->json($user, 200, [], ['groups' => 'userDetail:read']);
     }
 }

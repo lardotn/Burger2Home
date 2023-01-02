@@ -3,24 +3,53 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Uid\Uuid;
+use Symfony\Bridge\Doctrine\Types\UuidType;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
+#[HasLifecycleCallbacks]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\Column(type: UuidType::NAME, unique: true)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
+    private $uuid;
 
+    #[Groups(['userDetail:read'])]
     #[ORM\Column(length: 180, unique: true)]
     #[Assert\Length(min: 6,max: 180)]
     #[Assert\Email(mode: 'html5')]
     private ?string $email = null;
+
+    #[Groups(['userDetail:read'])]
+    #[ORM\Column(type: 'string', length: 100)]
+    #[Assert\NotBlank()]
+    #[Assert\Length(min: 3,max: 100)]
+    private ?string $first_name = null;
+
+    #[Groups(['userDetail:read'])]
+    #[ORM\Column(type: 'string', length: 100)]
+    #[Assert\NotBlank()]
+    #[Assert\Length(min: 3,max: 100)]
+    private ?string $last_name = null;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Assert\Length(max: 255)]
+    private ?string $avatar = null;
+
+    #[Groups(['userDetail:read'])]
+    #[ORM\Column]
+    #[Assert\NotNull()]
+    #[Assert\PositiveOrZero()]
+    private ?int $fidelityPoint = null;
 
     #[ORM\Column]
     private array $roles = [];
@@ -29,18 +58,39 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column]
+    #[Assert\NotBlank()]
     private ?string $password = null;
 
-    // public function __construct()
-    // {
-    //     if (empty($this->roles)) {
-    //         $this->roles = ['ROLE_USER'];
-    //     }
-    // }
+    #[ORM\Column(type: 'datetime_immutable')]
+    #[Assert\NotNull()]
+    private \DateTimeImmutable $createdAt;
 
-    public function getId(): ?int
+    #[ORM\Column(type: 'datetime_immutable')]
+    #[Assert\NotNull()]
+    private \DateTimeImmutable $updatedAt;
+
+    public function __construct()
     {
-        return $this->id;
+        $this->fidelityPoint = 0;
+        $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    #[ORM\PrePersist]
+    public function prePersist(): void
+    {
+        $this->avatar = 'https://api.dicebear.com/4.x/bottts/png?seed=' . $this->email;
+    }
+
+    #[ORM\PreUpdate]
+    public function preUpdate(): void
+    {
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    public function getId(): ?Uuid
+    {
+        return $this->uuid;
     }
 
     public function getEmail(): ?string
@@ -63,6 +113,47 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getUserIdentifier(): string
     {
         return (string) $this->email;
+    }
+
+    public function getFirstName(): ?string
+    {
+        return $this->first_name;
+    }
+
+    public function setFirstName(string $first_name): self
+    {
+        $this->first_name = $first_name;
+
+        return $this;
+    }
+
+    public function getLastName(): ?string
+    {
+        return $this->last_name;
+    }
+
+    public function setLastName(string $last_name): self
+    {
+        $this->last_name = $last_name;
+
+        return $this;
+    }
+
+    public function getAvatar(): ?string
+    {
+        return $this->avatar;
+    }
+
+    public function getFidelityPoint(): ?int
+    {
+        return $this->fidelityPoint;
+    }
+
+    public function setFidelityPoint(?int $fidelityPoint): self
+    {
+        $this->fidelityPoint = $fidelityPoint;
+
+        return $this;
     }
 
     /**
@@ -95,6 +186,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPassword(string $password): self
     {
         $this->password = $password;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): \DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function getUpdatedAt(): \DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(\DateTimeImmutable $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }
