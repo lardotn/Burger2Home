@@ -40,8 +40,6 @@ class MyGoogleAuthenticator extends OAuth2Authenticator implements Authenticatio
         $client = $this->clientRegistry->getClient('google');
         $accessToken = $this->fetchAccessToken($client);
 
-        dd($accessToken);
-
         return new SelfValidatingPassport(
             new UserBadge($accessToken->getToken(), function() use ($accessToken, $client) {
                 /** @var GoogleUser $googleUser */
@@ -61,7 +59,7 @@ class MyGoogleAuthenticator extends OAuth2Authenticator implements Authenticatio
 
                 // 3) Maybe you just want to "register" them by creating
                 // a User object
-                $user->setFacebookId($googleUser->getId());
+                $user->setOauthId($googleUser->getId());
                 $this->entityManager->persist($user);
                 $this->entityManager->flush();
 

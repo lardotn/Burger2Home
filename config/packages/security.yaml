@@ -16,10 +16,14 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-        login:
+        main:
+            lazy: true
+            provider: app_user_provider
+            custom_authenticator: 
+                - App\Security\MyGoogleAuthenticator
+            json_login:
             pattern: ^/signin
             stateless: true
-            provider: app_user_provider
             json_login:
                 check_path: /signin
                 username_path: email
@@ -33,11 +37,6 @@ security:
             entry_point: jwt
             refresh_jwt:
                 check_path: jwt_refresh
-        main:
-            lazy: true
-            provider: app_user_provider
-            custom_authenticators: 
-                - App\Security\MyGoogleAuthenticator
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall

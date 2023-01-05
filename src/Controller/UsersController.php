@@ -16,49 +16,49 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UsersController extends AbstractController
 {
-    #[Route('/signup', name: 'app_users_signup', methods: ['POST'])]
-    public function userSignup(
-        Request $request, 
-        SerializerInterface $serializer,
-        ValidatorInterface $validator,
-        UserPasswordHasherInterface $passwordHasher,
-        EntityManagerInterface $em
-    ): JsonResponse {        
-        try {
-            $jsonRecu = $request->getContent();
+    // #[Route('/signup', name: 'app_users_signup', methods: ['POST'])]
+    // public function userSignup(
+    //     Request $request, 
+    //     SerializerInterface $serializer,
+    //     ValidatorInterface $validator,
+    //     UserPasswordHasherInterface $passwordHasher,
+    //     EntityManagerInterface $em
+    // ): JsonResponse {        
+    //     try {
+    //         $jsonRecu = $request->getContent();
 
-            $user = $serializer->deserialize($jsonRecu, User::class, 'json');
+    //         $user = $serializer->deserialize($jsonRecu, User::class, 'json');
 
-            $newUser = new User();
+    //         $newUser = new User();
     
-            $newUser->setEmail(trim(htmlspecialchars($user->getEmail())));
-            $newUser->setFirstName(trim(htmlspecialchars($user->getFirstName())));
-            $newUser->setLastName(trim(htmlspecialchars($user->getLastName())));
-            $newUser->setPassword(trim($user->getPassword()));
+    //         $newUser->setEmail(trim(htmlspecialchars($user->getEmail())));
+    //         $newUser->setFirstName(trim(htmlspecialchars($user->getFirstName())));
+    //         $newUser->setLastName(trim(htmlspecialchars($user->getLastName())));
+    //         $newUser->setPassword(trim($user->getPassword()));
     
-            $hashedPassword = $passwordHasher->hashPassword(
-                $user,
-                $user->getPassword()
-            );
-            $newUser->setPassword($hashedPassword);
+    //         $hashedPassword = $passwordHasher->hashPassword(
+    //             $user,
+    //             $user->getPassword()
+    //         );
+    //         $newUser->setPassword($hashedPassword);
 
-            $newUser->setFidelityPoint(0);
-            $newUser->setRoles(['ROLE_USER']);
+    //         $newUser->setFidelityPoint(0);
+    //         $newUser->setRoles(['ROLE_USER']);
     
-            $errors = $validator->validate($newUser);
+    //         $errors = $validator->validate($newUser);
     
-            if (count($errors) > 0) {
-                return $this->json($errors, 400);
-            }
+    //         if (count($errors) > 0) {
+    //             return $this->json($errors, 400);
+    //         }
     
-            $em->persist($newUser);
-            $em->flush();
+    //         $em->persist($newUser);
+    //         $em->flush();
     
-            return $this->json(201);
-        } catch (Exception $e) {
-            return $this->json(['status' => 400, 'message' => $e], 400);
-        }
-    }
+    //         return $this->json(201);
+    //     } catch (Exception $e) {
+    //         return $this->json(['status' => 400, 'message' => $e], 400);
+    //     }
+    // }
 
     #[Route('/users/current', name: 'app_users_current', methods: ['GET'])]
     public function getCurrentUser(#[CurrentUser] User $user): JsonResponse
