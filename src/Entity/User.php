@@ -15,7 +15,7 @@ use Symfony\Bridge\Doctrine\Types\UuidType;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[HasLifecycleCallbacks]
-class User implements UserInterface //, PasswordAuthenticatedUserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\Column(type: UuidType::NAME, unique: true)]
@@ -45,9 +45,9 @@ class User implements UserInterface //, PasswordAuthenticatedUserInterface
     #[Assert\Length(max: 255)]
     private ?string $avatar = null;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Assert\Length(max: 255)]
-    #[Assert\NotNull()]
+    // #[Assert\NotNull()]
     private ?string $oauth_id = null;
 
     #[Groups(['userDetail:read'])]
@@ -59,12 +59,12 @@ class User implements UserInterface //, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private array $roles = [];
 
-    // /**
-    //  * @var string The hashed password
-    //  */
-    // #[ORM\Column]
+    /**
+     * @var string The hashed password
+     */
+    #[ORM\Column(nullable: true)]
     // #[Assert\NotBlank()]
-    // private ?string $password = null;
+    private ?string $password = null;
 
     #[ORM\Column(type: 'datetime_immutable')]
     #[Assert\NotNull()]
@@ -192,20 +192,20 @@ class User implements UserInterface //, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    // /**
-    //  * @see PasswordAuthenticatedUserInterface
-    //  */
-    // public function getPassword(): string
-    // {
-    //     return $this->password;
-    // }
+    /**
+     * @see PasswordAuthenticatedUserInterface
+     */
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
 
-    // public function setPassword(string $password): self
-    // {
-    //     $this->password = $password;
+    public function setPassword(string $password): self
+    {
+        $this->password = $password;
 
-    //     return $this;
-    // }
+        return $this;
+    }
 
     public function getCreatedAt(): \DateTimeImmutable
     {
