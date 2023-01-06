@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,6 +22,7 @@ class UsersController extends AbstractController
         SerializerInterface $serializer,
         ValidatorInterface $validator,
         EntityManagerInterface $em,
+        JWTTokenManagerInterface $JWTManager
     ): JsonResponse {        
         try {
             $jsonRecu = $request->getContent();
@@ -30,7 +32,12 @@ class UsersController extends AbstractController
             $existingUser = $em->getRepository(User::class)->findOneBy(['email' => $user->getEmail()]);
 
             if ($existingUser) {
-                return $this->json(201);
+                return $this->json(
+                    array(
+                        "currentUser" => $existingUser,
+                        'token' => $JWTManager->create($existingUser)
+                    ), 200, [], ['groups' => 'userDetail:read']
+                );
             }
 
             $newUser = new User();
@@ -58,7 +65,12 @@ class UsersController extends AbstractController
             $em->persist($newUser);
             $em->flush();
     
-            return $this->json(201);
+            return $this->json(
+                array(
+                    "currentUser" => $newUser,
+                    'token' => $JWTManager->create($newUser)
+                ), 200, [], ['groups' => 'userDetail:read']
+            );
         } catch (Exception $e) {
             return $this->json(['status' => 400, 'message' => $e], 400);
         }
