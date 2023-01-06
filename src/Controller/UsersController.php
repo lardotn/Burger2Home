@@ -8,7 +8,6 @@ use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -21,26 +20,31 @@ class UsersController extends AbstractController
         Request $request, 
         SerializerInterface $serializer,
         ValidatorInterface $validator,
-        UserPasswordHasherInterface $passwordHasher,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
     ): JsonResponse {        
         try {
             $jsonRecu = $request->getContent();
 
             $user = $serializer->deserialize($jsonRecu, User::class, 'json');
 
+            $existingUser = $em->getRepository(User::class)->findOneBy(['email' => $user->getEmail()]);
+
+            if ($existingUser) {
+                return $this->json(201);
+            }
+
             $newUser = new User();
     
             $newUser->setEmail(trim(htmlspecialchars($user->getEmail())));
             $newUser->setFirstName(trim(htmlspecialchars($user->getFirstName())));
             $newUser->setLastName(trim(htmlspecialchars($user->getLastName())));
-            $newUser->setPassword(trim($user->getPassword()));
+            // $newUser->setPassword(trim($user->getPassword()));
     
-            $hashedPassword = $passwordHasher->hashPassword(
-                $user,
-                $user->getPassword()
-            );
-            $newUser->setPassword($hashedPassword);
+            // $hashedPassword = $passwordHasher->hashPassword(
+            //     $user,
+            //     $user->getPassword()
+            // );
+            // $newUser->setPassword($hashedPassword);
 
             $newUser->setFidelityPoint(0);
             $newUser->setRoles(['ROLE_USER']);
