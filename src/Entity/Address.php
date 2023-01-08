@@ -5,17 +5,21 @@ namespace App\Entity;
 use App\Repository\AddressRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
+use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 
 #[ORM\Entity(repositoryClass: AddressRepository::class)]
+#[HasLifecycleCallbacks]
 class Address
 {
+    #[Groups(['addressDetail:read'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
     #[Groups(['addressDetail:read'])]
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
     private ?string $street = null;
 
     #[Groups(['addressDetail:read'])]
@@ -26,6 +30,10 @@ class Address
     #[ORM\Column(length: 50)]
     private ?string $city = null;
 
+    #[SerializedName('isActive')]
+    #[ORM\Column]
+    private ?bool $is_active = null;
+
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
@@ -33,12 +41,18 @@ class Address
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'addresses')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?User $owner = null;
 
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    #[ORM\PreUpdate]
+    public function preUpdate(): void
+    {
         $this->updatedAt = new \DateTimeImmutable();
     }
 
@@ -79,6 +93,18 @@ class Address
     public function setCity(string $city): self
     {
         $this->city = $city;
+
+        return $this;
+    }
+
+    public function isIsActive(): ?bool
+    {
+        return $this->is_active;
+    }
+
+    public function setIsActive(bool $is_active): self
+    {
+        $this->is_active = $is_active;
 
         return $this;
     }
