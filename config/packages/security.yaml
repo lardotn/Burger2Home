@@ -58,6 +58,7 @@ security:
         - { path: ^/signin, roles: PUBLIC_ACCESS }
         - { path: ^/signup, roles: PUBLIC_ACCESS }
         - { path: ^/refresh, roles: PUBLIC_ACCESS }
+        - { path: ^/addresses, roles: PUBLIC_ACCESS }
         - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/users, roles: ROLE_ADMIN }
         - { path: ^/users/current, roles: IS_AUTHENTICATED_FULLY }

@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -21,24 +23,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: UuidType::NAME, unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
-    private $uuid;
+    private $id = null;
 
     #[Groups(['userDetail:read'])]
     #[ORM\Column(length: 180, unique: true)]
-    #[Assert\Length(min: 6,max: 180)]
+    #[Assert\Length(min: 6, max: 180)]
     #[Assert\Email(mode: 'html5')]
     private ?string $email = null;
 
     #[Groups(['userDetail:read'])]
     #[ORM\Column(type: 'string', length: 100)]
     #[Assert\NotBlank()]
-    #[Assert\Length(min: 3,max: 100)]
+    #[Assert\Length(min: 3, max: 100)]
     private ?string $first_name = null;
 
     #[Groups(['userDetail:read'])]
     #[ORM\Column(type: 'string', length: 100)]
     #[Assert\NotBlank()]
-    #[Assert\Length(min: 3,max: 100)]
+    #[Assert\Length(min: 3, max: 100)]
     private ?string $last_name = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
@@ -74,11 +76,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\NotNull()]
     private \DateTimeImmutable $updatedAt;
 
+    #[Groups(['addressDetail:read'])]
+    #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Address::class)]
+    private Collection $addresses;
+
     public function __construct()
     {
         $this->fidelity_point = 0;
         $this->createdAt = new \DateTimeImmutable();
         $this->updatedAt = new \DateTimeImmutable();
+        $this->addresses = new ArrayCollection();
     }
 
     #[ORM\PrePersist]
@@ -95,7 +102,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getId(): ?Uuid
     {
-        return $this->uuid;
+        return $this->id;
     }
 
     public function getEmail(): ?string
@@ -231,5 +238,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    /**
+     * @return Collection<int, Address>
+     */
+    public function getAddresses(): Collection
+    {
+        return $this->addresses;
+    }
+
+    public function addAddress(Address $address): self
+    {
+        if (!$this->addresses->contains($address)) {
+            $this->addresses->add($address);
+            $address->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAddress(Address $address): self
+    {
+        if ($this->addresses->removeElement($address)) {
+            // set the owning side to null (unless already changed)
+            if ($address->getOwner() === $this) {
+                $address->setOwner(null);
+            }
+        }
+
+        return $this;
     }
 }
