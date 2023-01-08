@@ -23,6 +23,29 @@ class AddressesController extends AbstractController
         return $this->json($user->getAddresses(), 200, [], ['groups' => 'addressDetail:read']);
     }
 
+    #[Route('/addresses/{id}', name: 'app_addresses_detail', methods: ['GET'])]
+    public function getUserAddressDetail(
+        #[CurrentUser] ?User $user,
+        string $id,
+        EntityManagerInterface $entityManager
+    ): JsonResponse {
+        try {
+            $existingAddress = $entityManager->getRepository(Address::class)->findOneBy(['id' => $this->secureString($id)]);
+
+            if ($existingAddress) {
+                foreach ($user->getAddresses() as $element) {
+                    if ($existingAddress->getId() === $element->getId()) {
+                        return $this->json($element, 200, [], ['groups' => 'addressDetail:read']);
+                    }
+                }
+            }
+
+            return $this->json(404);
+        } catch (Exception $e) {
+            return $this->json(['status' => 400, 'message' => $e], 400);
+        }
+    }
+
     #[Route('/addresses', name: 'user_new_addresses', methods: ['POST'])]
     public function setUserNewAddress(
         #[CurrentUser] ?User $user,
@@ -42,7 +65,7 @@ class AddressesController extends AbstractController
 
             $existingAddress = $entityManager->getRepository(Address::class)->findOneBy(['street' => $this->secureString($address->getStreet())]);
 
-            if ($existingAddress) {
+            if ($existingAddress && $existingAddress->getPostalCode() === $address->getPostalCode()) {
                 return $this->json(['status' => 403, 'message' => "Address is already existing in database."], 403);
             }
 

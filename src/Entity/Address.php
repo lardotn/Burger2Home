@@ -19,7 +19,7 @@ class Address
     private ?int $id = null;
 
     #[Groups(['addressDetail:read'])]
-    #[ORM\Column(length: 255, unique: true)]
+    #[ORM\Column(length: 255)]
     private ?string $street = null;
 
     #[Groups(['addressDetail:read'])]
